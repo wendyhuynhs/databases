@@ -12,13 +12,17 @@ module.exports = {
         }
       })
     }, // a function which produces all the messages
-    post: (body, data, callback) =>  {
-      console.log(body, 'I got here');
-      db.query(`insert into messages (username, message, roomname) values (?,?,?)`, data, (err, result) => {
+    post: (body, callback) =>  {
+      // const sql = db.query(`insert into messages set?`)
+      // console.log(body, 'I got here');
+      const sql = `INSERT INTO messages (id, username, message, roomname) VALUES ('${body.id}', '${body.username}', '${body.message}', '${body.roomname}')`;
+      // console.log(sql);
+      db.query(sql, (err, result) => {
+        console.log(result)
         if (err) {
-          callback(err, 'ERR ORRRROROR')
+          callback(err)
         } else {
-          callback(null, result, 'THE GOOD CALLBACK');
+          callback(null, result);
         }
       }) 
     } // a function which can be used to insert a message into the database
@@ -26,8 +30,25 @@ module.exports = {
 
   users: {
     // Ditto as above.
-    get: function () {},
-    post: function () {}
+    get: function (callback) {
+      db.query('select * from users', (err, results) => {
+        if (err) {
+          callback(err)
+        } else {
+          callback(null, results)
+        }
+      })
+    },
+    post: (body, callback) => {
+      const sql = `INSERT INTO username (id, username) VALUES ('${body.id}', '${body.username}')`;
+      db.query(sql, (err, result) => {
+        if(err) {
+          callback(err);
+        } else {
+          callback(null, result);
+        }
+      });
+    }
   }
 };
 
